@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../db");
+const auth = require("../middleware/auth");
 
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   const {
     driverName,
     vehicleNo,
@@ -36,12 +37,11 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get("/user/:vehicleNo", async (req, res) => {
+router.get("/user/:vehicleNo", auth, async (req, res) => {
   const { vehicleNo } = req.params;
 
   try {
-    const result = await pool.query(
-      `
+    const result = await pool.query(`
       SELECT *
       FROM ambulance_appointments
       WHERE vehicle_no = $1

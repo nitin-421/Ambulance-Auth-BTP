@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../db");
+const jwt = require("jsonwebtoken");
 
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    const result = await pool.query(
-      `
+    const result = await pool.query(`
       SELECT *
       FROM ambulance_users
       WHERE username = $1
@@ -25,15 +25,22 @@ router.post("/login", async (req, res) => {
 
     const user = result.rows[0];
 
+    const token = jwt.sign(
+      {
+        driverName: user.driver_name,
+        vehicleNo: user.vehicle_no,
+      },
+      process.env.JWT_SECRET
+    );
+    
     res.json({
-      success: true,
+      token,
       user: {
-        id: user.id,
-        username: user.username,
         driverName: user.driver_name,
         vehicleNo: user.vehicle_no,
       },
     });
+
   } catch (err) {
     console.error(err);
 
