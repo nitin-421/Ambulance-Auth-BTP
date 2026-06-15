@@ -30,7 +30,7 @@ router.post("/login", async (req, res) => {
         driverName: user.driver_name,
         vehicleNo: user.vehicle_no,
       },
-      process.env.JWT_SECRET
+      process.env.JWT_KEY
     );
     
     res.json({
